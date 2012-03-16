@@ -53,7 +53,6 @@ public class SystemUtils {
 		env.put("cassandra.join_ring", join_ring ? "true" : "false");
 		startCass.directory(new File("/"));
 		startCass.redirectErrorStream(true);
-		startCass.redirectErrorStream(true);
 		Process process = startCass.start();
 		BufferedReader error = new BufferedReader(new InputStreamReader(process.getInputStream()));
 		String tmp;
@@ -62,7 +61,7 @@ public class SystemUtils {
 			errorLog.append(tmp);
 		}
 		if (errorLog.length() > 0) {
-			logger.debug(errorLog.toString());
+			logger.error(errorLog.toString());
 		}
 		logger.info("Starting cassandra server ....");
 	}
