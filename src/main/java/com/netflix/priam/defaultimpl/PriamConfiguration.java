@@ -104,10 +104,10 @@ public class PriamConfiguration implements IConfiguration
     private final String DEFAULT_BACKUP_LOCATION = "backup";
     private final String DEFAULT_BUCKET_NAME = "cassandra-archive";
     private String DEFAULT_AVAILABILITY_ZONES = "";
-
-    private final String DEFAULT_MAX_DIRECT_MEM = "50G";
-    private final String DEFAULT_MAX_HEAP = "8G";
-    private final String DEFAULT_MAX_NEWGEN_HEAP = "2G";
+    // TODO define proper valuea according to the type of instance.
+    private final String DEFAULT_MAX_DIRECT_MEM = "5G";
+    private final String DEFAULT_MAX_HEAP = "800M";
+    private final String DEFAULT_MAX_NEWGEN_HEAP = "200M";
     private final int DEFAULT_JMX_PORT = 7199;
     private final int DEFAULT_THRIFT_PORT = 9160;
     private final int DEFAULT_STORAGE_PORT = 7000;
