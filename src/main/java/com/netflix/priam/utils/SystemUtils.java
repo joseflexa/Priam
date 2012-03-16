@@ -31,6 +31,7 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.netflix.priam.IConfiguration;
+import java.io.*;
 
 public class SystemUtils
 {
@@ -77,7 +78,7 @@ public class SystemUtils
 		}
 		if (errorLog.length()>0) {
 			logger.debug(errorLog.toString());
-		}        
+		}
         logger.info("Starting cassandra server ....");
     }
 
