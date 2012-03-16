@@ -33,282 +33,238 @@ import com.google.common.io.Files;
 import com.netflix.priam.IConfiguration;
 import java.io.*;
 
-public class SystemUtils
-{
-    private static final Logger logger = LoggerFactory.getLogger(SystemUtils.class);
-    private static final String SUDO_STRING = "/usr/bin/sudo";
+public class SystemUtils {
 
-    /**
-     * Start Cassandra process from this co-process.
-     */
-    public static void startCassandra(boolean join_ring, IConfiguration config) throws IOException, InterruptedException
-    {
-        logger.info("Starting cassandra server ....Join ring=" + join_ring);
+	private static final Logger logger = LoggerFactory.getLogger(SystemUtils.class);
+	private static final String SUDO_STRING = "/usr/bin/sudo";
 
-        List<String> command = Lists.newArrayList();
-        if (!"root".equals(System.getProperty("user.name")))
-        {
-            command.add(SUDO_STRING);
-            command.add("-E");
-        }
-        for(String param : config.getCassStartupScript().split(" ")){
-            if( StringUtils.isNotBlank(param))
-                command.add(param);
-        }
-        ProcessBuilder startCass = new ProcessBuilder(command);
-        Map<String, String> env = startCass.environment();
-        env.put("HEAP_NEWSIZE", config.getHeapNewSize());
-        env.put("MAX_HEAP_SIZE", config.getHeapSize());
-        env.put("DATA_DIR", config.getDataFileLocation());
-        env.put("COMMIT_LOG_DIR", config.getCommitLogLocation());
-        env.put("LOCAL_BACKUP_DIR", config.getBackupLocation());
-        env.put("CACHE_DIR", config.getCacheLocation());
-        env.put("JMX_PORT", "" + config.getJmxPort());
-        env.put("MAX_DIRECT_MEMORY", config.getMaxDirectMemory());
-        env.put("cassandra.join_ring", join_ring ? "true" : "false");
-        startCass.directory(new File("/"));
-        startCass.redirectErrorStream(true);
-        startCass.redirectErrorStream(true);
-        Process process = startCass.start();
-    	BufferedReader error = new BufferedReader(new InputStreamReader(process.getInputStream()));
+	/**
+	 * Start Cassandra process from this co-process.
+	 */
+	public static void startCassandra(boolean join_ring, IConfiguration config) throws IOException, InterruptedException {
+		logger.info("Starting cassandra server ....Join ring=" + join_ring);
+
+		List<String> command = Lists.newArrayList();
+		if (!"root".equals(System.getProperty("user.name"))) {
+			command.add(SUDO_STRING);
+			command.add("-E");
+		}
+		for (String param : config.getCassStartupScript().split(" ")) {
+			if (StringUtils.isNotBlank(param)) {
+				command.add(param);
+			}
+		}
+		ProcessBuilder startCass = new ProcessBuilder(command);
+		Map<String, String> env = startCass.environment();
+		env.put("HEAP_NEWSIZE", config.getHeapNewSize());
+		env.put("MAX_HEAP_SIZE", config.getHeapSize());
+		env.put("DATA_DIR", config.getDataFileLocation());
+		env.put("COMMIT_LOG_DIR", config.getCommitLogLocation());
+		env.put("LOCAL_BACKUP_DIR", config.getBackupLocation());
+		env.put("CACHE_DIR", config.getCacheLocation());
+		env.put("JMX_PORT", "" + config.getJmxPort());
+		env.put("MAX_DIRECT_MEMORY", config.getMaxDirectMemory());
+		env.put("cassandra.join_ring", join_ring ? "true" : "false");
+		startCass.directory(new File("/"));
+		startCass.redirectErrorStream(true);
+		startCass.redirectErrorStream(true);
+		Process process = startCass.start();
+		BufferedReader error = new BufferedReader(new InputStreamReader(process.getInputStream()));
 		String tmp;
 		StringBuilder errorLog = new StringBuilder();
-		while ((tmp = error.readLine())!=null) {
+		while ((tmp = error.readLine()) != null) {
 			errorLog.append(tmp);
 		}
-		if (errorLog.length()>0) {
+		if (errorLog.length() > 0) {
 			logger.debug(errorLog.toString());
 		}
-        logger.info("Starting cassandra server ....");
-    }
+		logger.info("Starting cassandra server ....");
+	}
 
-    /**
-     * Stop Cassandra process from this co-process.
-     */
-    public static void stopCassandra(IConfiguration config) throws IOException
-    {
-        logger.info("Stopping cassandra server ....");
-        List<String> command = Lists.newArrayList();
-        if (!"root".equals(System.getProperty("user.name")))
-        {
-            command.add(SUDO_STRING);
-            command.add("-E");
-        }
-        for(String param : config.getCassStopScript().split(" ")){
-            if( StringUtils.isNotBlank(param))
-                command.add(param);
-        }
-        ProcessBuilder stopCass = new ProcessBuilder(command);
-        stopCass.directory(new File("/"));
-        stopCass.redirectErrorStream(true);
-        stopCass.start();
-    }
+	/**
+	 * Stop Cassandra process from this co-process.
+	 */
+	public static void stopCassandra(IConfiguration config) throws IOException {
+		logger.info("Stopping cassandra server ....");
+		List<String> command = Lists.newArrayList();
+		if (!"root".equals(System.getProperty("user.name"))) {
+			command.add(SUDO_STRING);
+			command.add("-E");
+		}
+		for (String param : config.getCassStopScript().split(" ")) {
+			if (StringUtils.isNotBlank(param)) {
+				command.add(param);
+			}
+		}
+		ProcessBuilder stopCass = new ProcessBuilder(command);
+		stopCass.directory(new File("/"));
+		stopCass.redirectErrorStream(true);
+		stopCass.start();
+	}
 
-    public static String getDataFromUrl(String url)
-    {
-        try
-        {
-            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-            conn.setRequestMethod("GET");
-            if (conn.getResponseCode() != 200)
-            {
-                throw new ConfigurationException("Unable to get data for URL " + url);
-            }
-            byte[] b = new byte[2048];
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            DataInputStream d = new DataInputStream((FilterInputStream) conn.getContent());
-            int c = 0;
-            while ((c = d.read(b, 0, b.length)) != -1)
-                bos.write(b, 0, c);
-            String return_ = new String(bos.toByteArray(), Charsets.UTF_8);
-            logger.info("Calling URL API: {} returns: {}", url, return_);
-            conn.disconnect();
-            return return_;
-        }
-        catch (Exception ex)
-        {
-            throw new RuntimeException(ex);
-        }
+	public static String getDataFromUrl(String url) {
+		try {
+			HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+			conn.setRequestMethod("GET");
+			if (conn.getResponseCode() != 200) {
+				throw new ConfigurationException("Unable to get data for URL " + url);
+			}
+			byte[] b = new byte[2048];
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			DataInputStream d = new DataInputStream((FilterInputStream) conn.getContent());
+			int c = 0;
+			while ((c = d.read(b, 0, b.length)) != -1) {
+				bos.write(b, 0, c);
+			}
+			String return_ = new String(bos.toByteArray(), Charsets.UTF_8);
+			logger.info("Calling URL API: {} returns: {}", url, return_);
+			conn.disconnect();
+			return return_;
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
 
-    }
+	}
 
-    /**
-     * delete all the files/dirs in the given Directory but dont delete the dir
-     * itself.
-     */
-    public static void cleanupDir(String dirPath, List<String> childdirs) throws IOException
-    {
-        if (childdirs == null || childdirs.size() == 0)
-            FileUtils.cleanDirectory(new File(dirPath));
-        else
-        {
-            for (String cdir : childdirs)
-                FileUtils.cleanDirectory(new File(dirPath + "/" + cdir));
-        }
-    }
+	/**
+	 * delete all the files/dirs in the given Directory but dont delete the dir
+	 * itself.
+	 */
+	public static void cleanupDir(String dirPath, List<String> childdirs) throws IOException {
+		if (childdirs == null || childdirs.size() == 0) {
+			FileUtils.cleanDirectory(new File(dirPath));
+		} else {
+			for (String cdir : childdirs) {
+				FileUtils.cleanDirectory(new File(dirPath + "/" + cdir));
+			}
+		}
+	}
 
-    public static void createDirs(String location)
-    {
-        File dirFile = new File(location);
-        if (dirFile.exists() && dirFile.isFile())
-        {
-            dirFile.delete();
-            dirFile.mkdirs();
-        }
-        else if (!dirFile.exists())
-            dirFile.mkdirs();
-    }
+	public static void createDirs(String location) {
+		File dirFile = new File(location);
+		if (dirFile.exists() && dirFile.isFile()) {
+			dirFile.delete();
+			dirFile.mkdirs();
+		} else if (!dirFile.exists()) {
+			dirFile.mkdirs();
+		}
+	}
 
-    /**
-     * Create a hash of the String which will be an absolute value...
-     */
-    public static int hash(String string)
-    {
-        int hash = string.hashCode();
-        return Math.abs(hash);
-    }
+	/**
+	 * Create a hash of the String which will be an absolute value...
+	 */
+	public static int hash(String string) {
+		int hash = string.hashCode();
+		return Math.abs(hash);
+	}
 
-    public static byte[] md5(byte[] buf)
-    {
-        try
-        {
-            MessageDigest mdigest = MessageDigest.getInstance("MD5");
-            mdigest.update(buf, 0, buf.length);
-            return mdigest.digest();
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
+	public static byte[] md5(byte[] buf) {
+		try {
+			MessageDigest mdigest = MessageDigest.getInstance("MD5");
+			mdigest.update(buf, 0, buf.length);
+			return mdigest.digest();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    /**
-     * Get a Md5 string which is similar to OS Md5sum
-     */
-    public static String md5(File file)
-    {
-        try
-        {
-            byte[] digest = Files.getDigest(file, MessageDigest.getInstance("MD5"));
-            return toHex(digest);
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
+	/**
+	 * Get a Md5 string which is similar to OS Md5sum
+	 */
+	public static String md5(File file) {
+		try {
+			byte[] digest = Files.getDigest(file, MessageDigest.getInstance("MD5"));
+			return toHex(digest);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    public static String toHex(byte[] digest)
-    {
-        StringBuffer sb = new StringBuffer(digest.length * 2);
-        for (int i = 0; i < digest.length; i++)
-        {
-            String hex = Integer.toHexString(digest[i]);
-            if (hex.length() == 1)
-            {
-                sb.append("0");
-            }
-            else if (hex.length() == 8)
-            {
-                hex = hex.substring(6);
-            }
-            sb.append(hex);
-        }
-        return sb.toString().toLowerCase();
-    }
+	public static String toHex(byte[] digest) {
+		StringBuffer sb = new StringBuffer(digest.length * 2);
+		for (int i = 0; i < digest.length; i++) {
+			String hex = Integer.toHexString(digest[i]);
+			if (hex.length() == 1) {
+				sb.append("0");
+			} else if (hex.length() == 8) {
+				hex = hex.substring(6);
+			}
+			sb.append(hex);
+		}
+		return sb.toString().toLowerCase();
+	}
 
-    public static String toBase64(byte[] md5)
-    {
-        byte encoded[] = Base64.encodeBase64(md5, false);
-        return new String(encoded);
-    }
+	public static String toBase64(byte[] md5) {
+		byte encoded[] = Base64.encodeBase64(md5, false);
+		return new String(encoded);
+	}
 
-    /**
-     * copy the input to the output.
-     */
-    public static void copyAndClose(InputStream input, OutputStream output) throws IOException
-    {
-        try
-        {
-            IOUtils.copy(input, output);
-        }
-        finally
-        {
-            IOUtils.closeQuietly(input);
-            IOUtils.closeQuietly(output);
-        }
-    }
+	/**
+	 * copy the input to the output.
+	 */
+	public static void copyAndClose(InputStream input, OutputStream output) throws IOException {
+		try {
+			IOUtils.copy(input, output);
+		} finally {
+			IOUtils.closeQuietly(input);
+			IOUtils.closeQuietly(output);
+		}
+	}
 
-    public static File[] sortByLastModifiedTime(File[] files)
-    {
-        Arrays.sort(files, new Comparator<File>()
-        {
-            public int compare(File file1, File file2)
-            {
-                return Long.valueOf(file2.lastModified()).compareTo(Long.valueOf(file1.lastModified()));
-            }
-        });
-        return files;
-    }
+	public static File[] sortByLastModifiedTime(File[] files) {
+		Arrays.sort(files, new Comparator<File>() {
 
-    public static void closeQuietly(JMXNodeTool tool)
-    {
-        try
-        {
-            tool.close();
-        }
-        catch (IOException e)
-        {
-            // Do nothing.
-        }
-    }
+			public int compare(File file1, File file2) {
+				return Long.valueOf(file2.lastModified()).compareTo(Long.valueOf(file1.lastModified()));
+			}
+		});
+		return files;
+	}
 
-    public static <T> T retryForEver(RetryableCallable<T> retryableCallable)
-    {
-        try
-        {
-            retryableCallable.set(Integer.MAX_VALUE, 1 * 1000);
-            return retryableCallable.call();
-        }
-        catch (Exception e)
-        {
-            // this might not happen because we are trying Integer.MAX_VALUE
-            // times.
-        }
-        return null;
-    }
+	public static void closeQuietly(JMXNodeTool tool) {
+		try {
+			tool.close();
+		} catch (IOException e) {
+			// Do nothing.
+		}
+	}
 
-    public static void closeQuietly(JMXConnector jmc)
-    {
-        try
-        {
-            jmc.close();
-        }
-        catch (IOException e)
-        {
-            // Do nothing.
-        }
-    }
+	public static <T> T retryForEver(RetryableCallable<T> retryableCallable) {
+		try {
+			retryableCallable.set(Integer.MAX_VALUE, 1 * 1000);
+			return retryableCallable.call();
+		} catch (Exception e) {
+			// this might not happen because we are trying Integer.MAX_VALUE
+			// times.
+		}
+		return null;
+	}
 
-    public static Date getDayBeginTime(Date date)
-    {
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        cal.setTime(date);
-        cal.set(Calendar.HOUR, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        return cal.getTime();
-    }
+	public static void closeQuietly(JMXConnector jmc) {
+		try {
+			jmc.close();
+		} catch (IOException e) {
+			// Do nothing.
+		}
+	}
 
-    public static Date getDayEndTime(Date date)
-    {
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        cal.setTime(date);
-        cal.set(Calendar.HOUR, 23);
-        cal.set(Calendar.MINUTE, 59);
-        cal.set(Calendar.SECOND, 59);
-        cal.set(Calendar.MILLISECOND, 0);
-        return cal.getTime();
-    }
+	public static Date getDayBeginTime(Date date) {
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		cal.setTime(date);
+		cal.set(Calendar.HOUR, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		return cal.getTime();
+	}
+
+	public static Date getDayEndTime(Date date) {
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		cal.setTime(date);
+		cal.set(Calendar.HOUR, 23);
+		cal.set(Calendar.MINUTE, 59);
+		cal.set(Calendar.SECOND, 59);
+		cal.set(Calendar.MILLISECOND, 0);
+		return cal.getTime();
+	}
 }
