@@ -71,14 +71,14 @@ public class SystemUtils
         startCass.redirectErrorStream(true);
         Process process = startCass.start();
     	BufferedReader error = new BufferedReader(new InputStreamReader(process.getInputStream()));
-		String tmp;
-		StringBuilder errorLog = new StringBuilder();
-		while ((tmp = error.readLine())!=null) {
-			errorLog.append(tmp);
-		}
-		if (errorLog.length()>0) {
-			logger.debug(errorLog.toString());
-		}
+	String tmp;
+	StringBuilder errorLog = new StringBuilder();
+	while ((tmp = error.readLine())!=null) {
+		errorLog.append(tmp);
+	}
+	if (errorLog.length()>0) {
+		logger.debug(errorLog.toString());
+	}
         logger.info("Starting cassandra server ....");
     }
 
