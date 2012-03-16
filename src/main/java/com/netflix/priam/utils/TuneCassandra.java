@@ -52,9 +52,9 @@ public class TuneCassandra extends Task
         map.put("cluster_name", config.getAppName());
         map.put("storage_port", config.getStoragePort());
         map.put("rpc_port", config.getThriftPort());
-        map.put("listen_address", null);
-        map.put("rpc_address", null);
-        //Dont bootstrap in restore mode        
+        map.put("listen_address", config.getHostIP());
+        map.put("rpc_address", config.getHostIP());
+        //Dont bootstrap in restore mode
         map.put("auto_bootstrap", Restore.isRestoreEnabled(config));
         map.put("saved_caches_directory", config.getCacheLocation());
         map.put("commitlog_directory", config.getCommitLogLocation());
@@ -64,7 +64,7 @@ public class TuneCassandra extends Task
         map.put("endpoint_snitch", config.getSnitch());
         map.put("in_memory_compaction_limit_in_mb", config.getInMemoryCompactionLimit());
         map.put("compaction_throughput_mb_per_sec", config.getCompactionThroughput());
-        
+
         if (null != map.get("max_hint_window_in_ms"))
         {
             map.put("max_hint_window_in_ms", config.getMaxHintWindowInMS());
