@@ -54,15 +54,6 @@ public class SystemUtils {
 		startCass.directory(new File("/"));
 		startCass.redirectErrorStream(true);
 		Process process = startCass.start();
-		BufferedReader error = new BufferedReader(new InputStreamReader(process.getInputStream()));
-		String tmp;
-		StringBuilder errorLog = new StringBuilder();
-		while ((tmp = error.readLine()) != null) {
-			errorLog.append(tmp);
-		}
-		if (errorLog.length() > 0) {
-			logger.error(errorLog.toString());
-		}
 		logger.info("Starting cassandra server ....");
 	}
 
