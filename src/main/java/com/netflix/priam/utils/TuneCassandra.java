@@ -52,8 +52,6 @@ public class TuneCassandra extends Task
         map.put("cluster_name", config.getAppName());
         map.put("storage_port", config.getStoragePort());
         map.put("rpc_port", config.getThriftPort());
-        map.put("listen_address", config.getHostIP());
-        map.put("rpc_address", config.getHostIP());
         //Dont bootstrap in restore mode
         map.put("auto_bootstrap", Restore.isRestoreEnabled(config));
         map.put("saved_caches_directory", config.getCacheLocation());
