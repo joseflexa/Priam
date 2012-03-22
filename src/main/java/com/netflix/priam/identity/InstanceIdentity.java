@@ -25,7 +25,7 @@ import com.netflix.priam.utils.TokenManager;
 /**
  * This class provides the central place to create and consume the identity of
  * the instance - token, seeds etc.
- * 
+ *
  */
 @Singleton
 public class InstanceIdentity
@@ -193,7 +193,7 @@ public class InstanceIdentity
         String ip = locMap.get(myInstance.getRac()).get(0).getHostName();
         return myInstance.getHostName().equals(ip);
     }
-    
+
     public boolean isReplace(){
         return isReplace;
     }

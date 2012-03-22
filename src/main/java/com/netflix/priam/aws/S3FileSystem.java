@@ -128,6 +128,7 @@ public class S3FileSystem implements IBackupFileSystem, S3FileSystemMBean
         try
         {
             Iterator<byte[]> chunks = compress.compress(in, chunkSize);
+            
             // Upload parts.
             int partNum = 0;
             while (chunks.hasNext())

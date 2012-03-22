@@ -89,7 +89,7 @@ public class PriamConfiguration implements IConfiguration
     private static String ASG_NAME = System.getenv("ASG_NAME");
     private static String REGION = System.getenv("EC2_REGION");
 
-    // Defaults 
+    // Defaults
     private final String DEFAULT_CLUSTER_NAME = "cass_cluster";
     private final String DEFAULT_DATA_LOCATION = "/var/lib/cassandra/data";
     private final String DEFAULT_COMMIT_LOG_LOCATION = "/var/lib/cassandra/commitlog";
@@ -104,7 +104,7 @@ public class PriamConfiguration implements IConfiguration
     private final String DEFAULT_BACKUP_LOCATION = "backup";
     private final String DEFAULT_BUCKET_NAME = "cassandra-archive";
     private String DEFAULT_AVAILABILITY_ZONES = "";
-    // TODO define proper valuea according to the type of instance.
+    // TODO define proper values according to the type of instance.
     private final String DEFAULT_MAX_DIRECT_MEM = "5G";
     private final String DEFAULT_MAX_HEAP = "800M";
     private final String DEFAULT_MAX_NEWGEN_HEAP = "200M";
@@ -188,15 +188,15 @@ public class PriamConfiguration implements IConfiguration
         }
         return null;
     }
-    
+
     /**
-     * Get the fist 3 available zones in the region 
+     * Get the fist 3 available zones in the region
      */
     public void setDefaultRACList(String region){
         AmazonEC2 client = new AmazonEC2Client(new BasicAWSCredentials(provider.getAccessKeyId(), provider.getSecretAccessKey()));
         client.setEndpoint("ec2." + region + ".amazonaws.com");
         DescribeAvailabilityZonesResult res = client.describeAvailabilityZones();
-        List<String> zone = Lists.newArrayList(); 
+        List<String> zone = Lists.newArrayList();
         for(AvailabilityZone reg : res.getAvailabilityZones()){
             if( reg.getState().equals("available") )
                 zone.add(reg.getZoneName());
@@ -336,7 +336,8 @@ public class PriamConfiguration implements IConfiguration
     @Override
     public long getBackupChunkSize()
     {
-        return config.getLong(CONFIG_BACKUP_CHUNK_SIZE, DEFAULT_BACKUP_CHUNK_SIZE);
+        long size = config.getLong(CONFIG_BACKUP_CHUNK_SIZE, DEFAULT_BACKUP_CHUNK_SIZE);
+        return size*1024*1024L;
     }
 
     @Override
@@ -566,6 +567,15 @@ public class PriamConfiguration implements IConfiguration
             return getList(prop);
         }
 
+    }
+
+    @Override
+    /**
+     * Defaults to 0, means dont set it in yaml
+     */
+    public int getMemtableTotalSpaceMB()
+    {
+        return 0;
     }
 
 }

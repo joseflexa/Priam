@@ -72,7 +72,7 @@ public class FakeConfiguration implements IConfiguration
     public String getCacheLocation()
     {
         // TODO Auto-generated method stub
-        return "cass/caches";
+        return null;
     }
 
     @Override
@@ -90,13 +90,15 @@ public class FakeConfiguration implements IConfiguration
     @Override
     public int getThriftPort()
     {
-        return 9160;
+        // TODO Auto-generated method stub
+        return 0;
     }
 
     @Override
     public String getSnitch()
     {
-        return "org.apache.cassandra.locator.SimpleSnitch";
+        // TODO Auto-generated method stub
+        return null;
     }
 
     @Override
@@ -234,7 +236,8 @@ public class FakeConfiguration implements IConfiguration
 
 	@Override
 	public int getInMemoryCompactionLimit() {
-		return 8;
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	@Override
@@ -313,7 +316,7 @@ public class FakeConfiguration implements IConfiguration
     @Override
     public String getSeedProviderName()
     {
-        return "org.apache.cassandra.locator.SimpleSeedProvider";
+        return "com.netflix.priam.cassandra.NFSeedProvider";
     }
 
     @Override
@@ -337,12 +340,6 @@ public class FakeConfiguration implements IConfiguration
     public int getHintHandoffDelay()
     {
         // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public int getMemtableTotalSpaceMB()
-    {
         return 0;
     }
 
