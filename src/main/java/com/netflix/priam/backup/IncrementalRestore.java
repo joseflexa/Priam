@@ -1,7 +1,6 @@
 package com.netflix.priam.backup;
 
 import java.io.File;
-import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Iterator;
 
