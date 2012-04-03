@@ -13,7 +13,6 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.ec2.model.AvailabilityZone;
-import com.amazonaws.services.ec2.model.DescribeAvailabilityZonesRequest;
 import com.amazonaws.services.ec2.model.DescribeAvailabilityZonesResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
@@ -24,9 +23,9 @@ import com.amazonaws.services.simpledb.model.Attribute;
 import com.amazonaws.services.simpledb.model.Item;
 import com.amazonaws.services.simpledb.model.SelectRequest;
 import com.amazonaws.services.simpledb.model.SelectResult;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.google.common.collect.Lists;
 import com.netflix.priam.IConfiguration;
 import com.netflix.priam.ICredential;
 import com.netflix.priam.utils.SystemUtils;
@@ -78,6 +77,8 @@ public class PriamConfiguration implements IConfiguration
     private static final String CONFIG_BACKUP_CHUNK_SIZE = PRIAM_PRE + ".backup.chunksizemb";
     private static final String CONFIG_BACKUP_RETENTION = PRIAM_PRE + ".backup.retention";
     private static final String CONFIG_BACKUP_RACS = PRIAM_PRE + ".backup.racs";
+    private static final String CONFIG_MULTITHREADED_COMPACTION = PRIAM_PRE + ".multithreaded.compaction";
+    private static final String CONFIG_STREAMING_THROUGHPUT_MB = PRIAM_PRE + ".streaming.throughput.mb";
 
     // Amazon specific
     private static final String CONFIG_ASG_NAME = PRIAM_PRE + ".az.asgname";
@@ -577,6 +578,18 @@ public class PriamConfiguration implements IConfiguration
     public int getMemtableTotalSpaceMB()
     {
         return config.getInteger(CONFIG_MEMTABLE_TOTAL_SPACE, 0);
+    }
+
+    @Override
+    public int getStreamingThroughputMB()
+    {
+        return config.getInteger(CONFIG_STREAMING_THROUGHPUT_MB, 400);
+    }
+
+    @Override
+    public boolean getMultithreadedCompaction()
+    {
+        return config.getBoolean(CONFIG_MULTITHREADED_COMPACTION, false);
     }
 
 }

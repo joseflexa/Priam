@@ -58,7 +58,7 @@ public class IncrementalRestore extends AbstractRestore
         }
 
         Iterator<AbstractBackupPath> incrementals = fs.list(prefix, latest.time, Calendar.getInstance().getTime());
-        FileUtils.createDirectory(restoreDir.getAbsolutePath()); // create restore dir.
+        FileUtils.createDirectory(restoreDir); // create restore dir.
         while (incrementals.hasNext())
         {
             latest = incrementals.next();
@@ -67,7 +67,7 @@ public class IncrementalRestore extends AbstractRestore
                 continue;
             
             File keyspaceDir = new File(restoreDir, latest.keyspace);
-            FileUtils.createDirectory(keyspaceDir.getAbsolutePath());
+            FileUtils.createDirectory(keyspaceDir);
             download(latest, new File(keyspaceDir, latest.fileName));
         }
         // wait for all the downloads in this batch to complete.

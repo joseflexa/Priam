@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,7 +129,6 @@ public class S3FileSystem implements IBackupFileSystem, S3FileSystemMBean
         try
         {
             Iterator<byte[]> chunks = compress.compress(in, chunkSize);
-            
             // Upload parts.
             int partNum = 0;
             while (chunks.hasNext())
@@ -249,7 +249,7 @@ public class S3FileSystem implements IBackupFileSystem, S3FileSystemMBean
     public String getPrefix()
     {
         String prefix = "";
-        if (!"".equals(config.getRestorePrefix()))
+        if (StringUtils.isNotBlank(config.getRestorePrefix()))
             prefix = config.getRestorePrefix();
         else
             prefix = config.getBackupPrefix();
